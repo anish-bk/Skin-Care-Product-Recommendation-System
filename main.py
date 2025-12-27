@@ -12,13 +12,22 @@ Dependencies:
     pip install torch torchvision pandas scikit-learn pillow tqdm timm
 
 Usage:
-    python main.py
+    python main.py --data-dir /path/to/dataset --epochs 20 --batch-size 32
+    
+    # Full example with all options:
+    python main.py --data-dir ./Skin-Problem-Detection-Multiple-Dataset \\
+                   --model efficientnet_b0 \\
+                   --batch-size 32 \\
+                   --epochs 20 \\
+                   --lr 0.0001 \\
+                   --image-size 224 \\
+                   --save-path best_model.pth
 """
 
 import warnings
 import torch.nn as nn
 
-from config import Config
+from config import Config, parse_args
 from dataset import create_data_loaders
 from model import create_model
 from train import train_model
@@ -33,22 +42,32 @@ def main():
     
     Pipeline Steps:
     ---------------
-    1. Setup: Initialize device, create data loaders
-    2. Model: Load pretrained model and modify for multi-label
-    3. Training: Train for multiple epochs with validation
-    4. Evaluation: Final evaluation on test set with detailed metrics
+    1. Parse command-line arguments and update config
+    2. Setup: Initialize device, create data loaders
+    3. Model: Load pretrained model and modify for multi-label
+    4. Training: Train for multiple epochs with validation
+    5. Evaluation: Final evaluation on test set with detailed metrics
     """
+    
+    # Parse command-line arguments and update config
+    args = parse_args()
+    Config.update_from_args(args)
     
     print("=" * 60)
     print("MULTI-LABEL SKIN PROBLEM CLASSIFICATION")
     print("=" * 60)
     
-    print(f"\nUsing device: {Config.DEVICE}")
-    print(f"Model: {Config.MODEL_NAME}")
-    print(f"Number of labels: {Config.NUM_CLASSES}")
-    print(f"Batch size: {Config.BATCH_SIZE}")
-    print(f"Epochs: {Config.NUM_EPOCHS}")
-    print(f"Learning rate: {Config.LEARNING_RATE}")
+    print(f"\nConfiguration:")
+    print(f"  Dataset path:   {Config.DATA_DIR}")
+    print(f"  Device:         {Config.DEVICE}")
+    print(f"  Model:          {Config.MODEL_NAME}")
+    print(f"  Pretrained:     {Config.PRETRAINED}")
+    print(f"  Number labels:  {Config.NUM_CLASSES}")
+    print(f"  Batch size:     {Config.BATCH_SIZE}")
+    print(f"  Epochs:         {Config.NUM_EPOCHS}")
+    print(f"  Learning rate:  {Config.LEARNING_RATE}")
+    print(f"  Image size:     {Config.IMAGE_SIZE}")
+    print(f"  Save path:      {Config.MODEL_SAVE_PATH}")
     
     # Step 1: Create Data Loaders
     train_loader, valid_loader, test_loader = create_data_loaders()
