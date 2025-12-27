@@ -39,12 +39,16 @@ class SkinProblemDataset(Dataset):
         self.transform = transform
         self.label_columns = label_columns or Config.LABEL_COLUMNS
         
-        # Load CSV file with labels
+        # Load CSV file with labels (auto-detect delimiter for TSV/CSV)
         csv_path = os.path.join(img_dir, "_classes.csv")
-        self.df = pd.read_csv(csv_path)
+        self.df = pd.read_csv(csv_path, sep=None, engine='python')  # Auto-detect separator
+        self.df.columns = self.df.columns.str.strip()
         
         # Clean filename column (handle potential whitespace)
         self.df['filename'] = self.df['filename'].str.strip()
+        
+        # Debug: print actual columns found
+        print(f"Found columns: {list(self.df.columns)}")
         
         # Verify all label columns exist
         missing_cols = set(self.label_columns) - set(self.df.columns)
