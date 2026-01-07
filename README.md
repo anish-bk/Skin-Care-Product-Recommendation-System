@@ -182,10 +182,6 @@ The training pipeline in `main.py` follows these steps:
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
 ## 👤 Author
 
 - **Anish Bishwakarma** - [GitHub](https://github.com/anish-bk)
